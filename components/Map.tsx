@@ -1,8 +1,9 @@
 import { useState, useMemo, useEffect } from "react";
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import { Box, useDisclosure } from "@chakra-ui/react";
-import { NFT } from "../utils/interfaces";
+
 import { MOCK_NFT_DATA } from "../utils/mockData";
+import { NFTschema, NFTType } from "../utils/zodTypes";
 
 export default function Places({
   setSelectedNFTId,
@@ -24,9 +25,12 @@ function Map({
   setSelectedNFTId: (nftId: number) => void;
 }) {
   const [selected, setSelected] = useState<any>(null);
-  const [markers, setMarkers] = useState<NFT[]>();
+  const [markers, setMarkers] = useState<NFTType[]>();
   useEffect(() => {
     setMarkers(MOCK_NFT_DATA);
+    if (NFTschema.safeParse(MOCK_NFT_DATA[0]).success) {
+      console.log("YAAAAy");
+    }
   }, []);
 
   //   useEffect(() => {
@@ -69,13 +73,15 @@ function Map({
       >
         {markers &&
           markers.map((marker) => {
-            return (
-              <Marker
-                key={marker.id}
-                position={marker?.geoCode}
-                onClick={() => setSelectedNFTId(marker?.id)}
-              />
-            );
+            if (NFTschema.safeParse(marker).success) {
+              return (
+                <Marker
+                  key={marker.id}
+                  position={marker?.geoCode}
+                  onClick={() => setSelectedNFTId(marker?.id)}
+                />
+              );
+            }
           })}
       </GoogleMap>
     </>

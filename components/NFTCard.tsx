@@ -13,10 +13,10 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { MouseEventHandler, ReactEventHandler } from "react";
-import { NFT } from "../utils/interfaces";
-
+import { NFTschema } from "../utils/zodTypes";
+import { z } from "zod";
 interface NFTCardProps {
-  nft: NFT;
+  nft: z.infer<typeof NFTschema>;
   isFront?: boolean;
   isCardLoaded?: boolean;
   onLoad?: ReactEventHandler<HTMLImageElement> | undefined;

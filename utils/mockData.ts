@@ -1,7 +1,8 @@
-import { NFT } from "./interfaces";
-import image from "../public/postcards.jpeg";
 
-export const MOCK_NFT_DATA: NFT[] = [
+import image from ".././public/postcards.jpeg";
+import { NFTType } from "./zodTypes";
+
+export const MOCK_NFT_DATA: NFTType[] = [
   {
     id: 1,
     name: "Dynamite factory",
@@ -127,7 +128,7 @@ export const MOCK_NFT_DATA: NFT[] = [
   {
     id: 11,
     name: "Lorem ipsum dolor ipsum dolor ipsum dolor",
-    description: "Description 34523 of NFTours. Lorem ipsum dolor sit amet.",
+    description: "Description 34523 of NFTours. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet .Lorem ipsum dolor sit amet",
     image: image.src,
     location: "Los Angeles, CA, USA",
     geoCode: {lat: 34.0522342, lng: -118.2436849},
@@ -175,3 +176,6 @@ export const MOCK_NFT_DATA: NFT[] = [
     
   
 ];
+
+
+

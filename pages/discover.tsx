@@ -4,10 +4,10 @@ import React, { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { HeaderNav } from "../components/HeaderNav";
 import { Modal, ModalOverlay } from "@chakra-ui/react";
-import { NFT } from "../utils/interfaces";
 import { NFTCardBack, NFTCardFront } from "../components/NFTCard";
 import { MOCK_NFT_DATA } from "../utils/mockData";
 import Places from "../components/Map";
+import { NFTType } from "../utils/zodTypes";
 
 const Discover = () => {
   const { isConnected } = useAccount();
@@ -17,7 +17,7 @@ const Discover = () => {
   const [imgLoaded, setImgLoaded] = useState(false);
   const [isCardLoaded, setIsCardLoaded] = useState(false);
   // mock NFT data
-  const [nfts, setNfts] = useState<NFT[]>(MOCK_NFT_DATA);
+  const [nfts, setNfts] = useState<NFTType[]>(MOCK_NFT_DATA);
 
   useEffect(() => {
     if (!isOpen) {
