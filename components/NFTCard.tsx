@@ -1,6 +1,7 @@
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import {
   Button,
+  Heading,
   HStack,
   IconButton,
   Image,
@@ -11,10 +12,14 @@ import {
   ModalHeader,
   Skeleton,
   Text,
+  useBoolean,
+  WrapItem,
 } from "@chakra-ui/react";
+import { Card, CardHeader, CardBody, CardFooter } from "@chakra-ui/card";
 import { MouseEventHandler, ReactEventHandler } from "react";
-import { NFTschema } from "../utils/zodTypes";
+import { NFTschema, NFTType } from "../utils/zodTypes";
 import { z } from "zod";
+
 interface NFTCardProps {
   nft: z.infer<typeof NFTschema>;
   isFront?: boolean;

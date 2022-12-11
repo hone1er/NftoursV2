@@ -15,14 +15,15 @@ export default function fetchNFTHandler(
 
   if (req.method === 'PUT') {
     const { id, userWallet, isFavorite } = req.body;
-    console.log("🚀 ~ file: updateFavorite.ts:18 ~ req.body", req.body)
-    console.log("🚀 ~ file: updateFavorite.ts:18 ~ id", id)
     const nft = MOCK_NFT_DATA.find(nft => nft.id === id);
-    console.log("🚀 ~ file: updateFavorite.ts:20 ~ nft", nft)
     if (nft) {
         nft.isFavorite = isFavorite;
         res.status(200).json(nft);
         return;
+  }
+  else {
+    res.status(400).json({error: 'Nft not found'})
+    return
   }
 }
   else {

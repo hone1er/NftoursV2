@@ -24,11 +24,10 @@ import useAppContext from "../context/AppContext";
 export function HeaderNav() {
   const { ensName, address, router, isConnected, connect, disconnect } =
     useAppContext();
-
   return (
     <Flex
       width={"100%"}
-      background={"gray.800"}
+      backgroundImage={"linear-gradient(to right, #fbb8ac, #e6a9e2);"}
       height={"85px"}
       p={4}
       m={0}

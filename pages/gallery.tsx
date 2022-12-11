@@ -5,17 +5,16 @@ import {
   useDisclosure,
   Skeleton,
   SkeletonCircle,
-  Wrap,
   WrapItem,
   Stack,
   Heading,
   Divider,
   ButtonGroup,
   Button,
-  Center,
   IconButton,
+  useToast,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useAccount } from "wagmi";
 import { HeaderNav } from "../components/HeaderNav";
 import { Modal, ModalOverlay } from "@chakra-ui/react";
@@ -27,6 +26,7 @@ import { Card, CardHeader, CardBody, CardFooter } from "@chakra-ui/card";
 
 const Gallery = () => {
   const { isConnected } = useAccount();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedNFTId, setSelectedNFTId] = useState(0);
   const [isFront, setIsFront] = useState(true);
@@ -34,21 +34,8 @@ const Gallery = () => {
   const [isCardLoaded, setIsCardLoaded] = useState(false);
   // mock NFT data
   const { nfts, isError, isLoading, mutate } = useNfts();
-  const { data, handleFavorite } = useIsFavorite();
-
-  useEffect(() => {
-    if (!isOpen) {
-      setIsFront(true);
-    }
-    return () => {};
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (!nfts) return;
-    mutate();
-    return () => {};
-  }, [data]);
-
+  const { handleFavorite } = useIsFavorite();
+  const toast = useToast();
   if (isLoading) {
     return (
       <Box>
@@ -90,7 +77,7 @@ const Gallery = () => {
             overflowX={"scroll"}
             display="grid"
             gridGap={8}
-            gridTemplateColumns="repeat(auto-fill,320px)"
+            gridTemplateColumns={"repeat(auto-fit,minmax(400px, 1fr))"}
             justifyContent={"center"}
             margin={"auto"}
           >
@@ -106,39 +93,57 @@ const Gallery = () => {
                 }
                 if (isSafe.success) {
                   return (
-                    <WrapItem
-                      key={nft.id}
-                      m={2}
-                      cursor={"pointer"}
-                      width={"100%"}
-                      background="linear-gradient(45deg, rgba(135,206,250,.1) 0%, rgba(255,165,0,.1) 100%)"
-                    >
-                      <Card maxW="xs" width={"100%"} margin={"auto"}>
+                    <WrapItem key={idx}>
+                      <Card
+                        maxW="xs"
+                        width={"100%"}
+                        margin={"auto"}
+                        color={"black"}
+                        background={"whiteAlpha.100"}
+                        borderRadius={"lg"}
+                        boxShadow={"lg"}
+                      >
                         <CardBody
+                          bg={"gray.50"}
+                          borderRadius={"lg"}
+                          borderBottomRadius={"0"}
                           onClick={() => {
                             setSelectedNFTId(idx);
                             onOpen();
                           }}
                         >
-                          <Skeleton
-                            width={"100%"}
-                            borderRadius="lg"
-                            borderBottomRadius={0}
-                            isLoaded={imgLoaded}
+                          <CardHeader
+                            boxShadow={"xl"}
+                            px={8}
+                            pb={8}
+                            borderRadius={"lg"}
+                            transition={"all 2s ease-in-out"}
+                            // colorful background gradient
+                            backgroundImage={
+                              "linear-gradient(to left, #fbb8ac, #e6a9e2)"
+                            }
                           >
-                            <Image
-                              src={nft.image}
-                              alt={nft.name}
-                              borderRadius="lg"
-                              borderBottomRadius={0}
-                              onLoad={() => {
-                                setImgLoaded(true);
-                              }}
-                              onError={() => {
-                                setImgLoaded(true);
-                              }}
-                            />
-                          </Skeleton>
+                            <Heading noOfLines={1} size="md" p={2} h={"44.5px"}>
+                              {nft?.name}
+                            </Heading>
+                            <Skeleton
+                              width={"100%"}
+                              borderRadius={"lg"}
+                              isLoaded={imgLoaded}
+                            >
+                              <Image
+                                borderRadius={"lg"}
+                                src={nft.image}
+                                alt={nft.name}
+                                onLoad={() => {
+                                  setImgLoaded(true);
+                                }}
+                                onError={() => {
+                                  setImgLoaded(true);
+                                }}
+                              />
+                            </Skeleton>
+                          </CardHeader>
                           <Stack mt="6" spacing="3" p={4}>
                             <Skeleton
                               height={imgLoaded ? "unset" : "20px"}
@@ -148,11 +153,7 @@ const Gallery = () => {
                                   ? "unset"
                                   : Math.max(120, Math.random() * 300) + "px"
                               }
-                            >
-                              <Heading noOfLines={1} size="md">
-                                {nft?.name}
-                              </Heading>
-                            </Skeleton>
+                            ></Skeleton>
                             <Skeleton noOfLines={3} isLoaded={imgLoaded}>
                               <Text noOfLines={3} minH={"92px"}>
                                 {nft.description}
@@ -176,12 +177,24 @@ const Gallery = () => {
                               variant={"unstyled"}
                               width={"auto"}
                               aria-label="favorite"
-                              onClick={() =>
-                                handleFavorite(
+                              onClick={async () => {
+                                const res = await handleFavorite(
                                   nfts &&
                                     nfts.find((n: NFTType) => n.id === nft.id)
-                                )
-                              }
+                                );
+                                if (res?.status === 200) {
+                                  mutate();
+                                } else {
+                                  toast({
+                                    title: "Error",
+                                    description:
+                                      "there was an error on our end. please try again later.",
+                                    status: "error",
+                                    duration: 4000,
+                                    isClosable: true,
+                                  });
+                                }
+                              }}
                             >
                               <span color={"red !important"}>
                                 {nft.isFavorite ? "♥" : "♡"}
@@ -214,8 +227,23 @@ const Gallery = () => {
                 onLoad={() => {
                   setIsCardLoaded(true);
                 }}
-                handleFavorite={() => {
-                  handleFavorite(nfts && nfts[selectedNFTId]);
+                handleFavorite={async () => {
+                  const res = await handleFavorite(
+                    nfts &&
+                      nfts.find((n: NFTType) => n.id === nfts[selectedNFTId].id)
+                  );
+                  if (res?.status === 200) {
+                    mutate();
+                  } else {
+                    toast({
+                      title: "Error",
+                      description:
+                        "there was an error on our end. please try again later.",
+                      status: "error",
+                      duration: 4000,
+                      isClosable: true,
+                    });
+                  }
                 }}
               />
             ) : (

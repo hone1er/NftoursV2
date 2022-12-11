@@ -23,12 +23,11 @@ const useIsFavorite = () => {
     if (updatedNFT?.error) {
       setError(updatedNFT?.error);
       setIsLoading(false);
-      return;
     } else {
       setData(updatedNFT);
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
+    return await res;
   };
 
   return {
