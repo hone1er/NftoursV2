@@ -1,17 +1,21 @@
-import { Box, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, Flex, Text, useDisclosure } from "@chakra-ui/react";
 
 import React, { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { HeaderNav } from "../components/HeaderNav";
 import { Modal, ModalOverlay } from "@chakra-ui/react";
 import { NFTCardBack, NFTCardFront } from "../components/NFTCard";
-import { MOCK_NFT_DATA } from "../utils/mockData";
-import Places from "../components/Map";
+import { ImageType, MOCK_NFT_DATA } from "../utils/mockData";
+
 import { NFTType } from "../utils/zodTypes";
+import DiscoverCard from "../components/discover/card";
+import { StaticImageData } from "next/image";
+import Map from "../components/Map";
 
 const Discover = () => {
   const { isConnected } = useAccount();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [center, setCenter] = useState<any>(null);
   const [selectedNFTId, setSelectedNFTId] = useState(0);
   const [isFront, setIsFront] = useState(true);
   const [imgLoaded, setImgLoaded] = useState(false);
@@ -44,13 +48,37 @@ const Discover = () => {
             <Text fontSize={"4xl"} color={"gray.600"}>
               Discover
             </Text>
-            <Places
-              setSelectedNFTId={(id) => {
+            <Map
+              nfts={nfts}
+              center={center}
+              setSelectedNFTId={(id: number) => {
                 setSelectedNFTId(id);
                 onOpen();
               }}
             />
           </Box>
+          <Flex
+            mx={4}
+            flexDir={"column"}
+            bg={"gray.300"}
+            gap={4}
+            p={4}
+            maxH={"750px"}
+            overflowY={"scroll"}
+          >
+            {nfts.map((nft: NFTType) => (
+              <DiscoverCard
+                image={nft.image}
+                location={nft.location}
+                price={nft.price}
+                handleClick={() => {
+                  setCenter(nft.geoCode);
+                  setSelectedNFTId(nft.id);
+                  onOpen();
+                }}
+              />
+            ))}
+          </Flex>
           <Modal onClose={onClose} isOpen={isOpen} isCentered>
             <ModalOverlay
               background={

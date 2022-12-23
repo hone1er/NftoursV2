@@ -2,3 +2,15 @@
         background: "red !important";
 
 }
+
+.map {
+        position: relative;
+        z-index: 0 !important;
+        width: 100vw;
+        height: 500px;
+}
+
+.leaflet-container {
+        position: relative;
+        z-index: 0 !important;
+}

@@ -12,7 +12,12 @@ export const NFTschema = z.object({
         invalid_type_error: "name must be a string",
       }).min(1).optional(),
     description: z.string().optional(),
-    image: z.string().optional(),
+    image: z.object({
+      src: z.string(),
+      height: z.number(),
+      width: z.number(),
+      blurDataURL: z.string().optional(),
+    }),
     location: z.string().optional(),
     geoCode: z.object({lat: z.number(), lng: z.number()}),
     price: z.number(),

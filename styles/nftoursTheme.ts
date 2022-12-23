@@ -5,7 +5,7 @@ import { ButtonStyle as Button } from "./components/ButtonTheme";
 
 
 const config: ThemeConfig = {
-  initialColorMode: "dark",
+  initialColorMode: "light",
   useSystemColorMode: false,
   cssVarPrefix: "NFTOURS",
 };

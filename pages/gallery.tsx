@@ -1,7 +1,6 @@
 import {
   Box,
   Text,
-  Image,
   useDisclosure,
   Skeleton,
   SkeletonCircle,
@@ -13,7 +12,9 @@ import {
   Button,
   IconButton,
   useToast,
+  keyframes,
 } from "@chakra-ui/react";
+import Image from "next/image";
 import React, { useState } from "react";
 import { useAccount } from "wagmi";
 import { HeaderNav } from "../components/HeaderNav";
@@ -26,7 +27,6 @@ import { Card, CardHeader, CardBody, CardFooter } from "@chakra-ui/card";
 
 const Gallery = () => {
   const { isConnected } = useAccount();
-
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedNFTId, setSelectedNFTId] = useState(0);
   const [isFront, setIsFront] = useState(true);
@@ -36,6 +36,7 @@ const Gallery = () => {
   const { nfts, isError, isLoading, mutate } = useNfts();
   const { handleFavorite } = useIsFavorite();
   const toast = useToast();
+
   if (isLoading) {
     return (
       <Box>
@@ -57,16 +58,29 @@ const Gallery = () => {
       <HeaderNav />
 
       {isConnected ? (
-        <Box width={"100%"} maxW={"1630px"} marginX={"auto"} p={4}>
+        <Box
+          width={"100%"}
+          maxW={"1630px"}
+          marginX={"auto"}
+          p={4}
+          bg={"gray.300"}
+        >
           <Box
             display="flex"
-            justifyContent="flex-start"
+            justifyContent="center"
             alignItems="center"
             width={"100%"}
             mt={12}
             p={2}
+            mb={8}
           >
-            <Text fontSize={"4xl"} color={"gray.600"}>
+            <Text
+              fontSize={"6xl"}
+              color={"gray.900"}
+              fontWeight={"bold"}
+              textUnderlineOffset={".3em"}
+              textDecorationLine={"underline"}
+            >
               Gallery
             </Text>
           </Box>
@@ -85,10 +99,6 @@ const Gallery = () => {
               nfts?.map((nft: NFTType, idx: number) => {
                 const isSafe = NFTschema.safeParse(nft);
                 if (!isSafe.success) {
-                  console.log(
-                    "🚀 ~ file: gallery.tsx:100 ~ nfts?.map ~ NFTschema.safeParse(nft)",
-                    isSafe.error
-                  );
                   return null;
                 }
                 if (isSafe.success) {
@@ -99,12 +109,11 @@ const Gallery = () => {
                         width={"100%"}
                         margin={"auto"}
                         color={"black"}
-                        background={"whiteAlpha.100"}
+                        bg={"gray.50"}
                         borderRadius={"lg"}
                         boxShadow={"lg"}
                       >
                         <CardBody
-                          bg={"gray.50"}
                           borderRadius={"lg"}
                           borderBottomRadius={"0"}
                           onClick={() => {
@@ -118,10 +127,7 @@ const Gallery = () => {
                             pb={8}
                             borderRadius={"lg"}
                             transition={"all 2s ease-in-out"}
-                            // colorful background gradient
-                            backgroundImage={
-                              "linear-gradient(to left, #fbb8ac, #e6a9e2)"
-                            }
+                            background={" #0000ff90"}
                           >
                             <Heading noOfLines={1} size="md" p={2} h={"44.5px"}>
                               {nft?.name}
@@ -130,17 +136,13 @@ const Gallery = () => {
                               width={"100%"}
                               borderRadius={"lg"}
                               isLoaded={imgLoaded}
+                              height={imgLoaded ? "unset" : "200px"}
                             >
                               <Image
-                                borderRadius={"lg"}
-                                src={nft.image}
-                                alt={nft.name}
-                                onLoad={() => {
-                                  setImgLoaded(true);
-                                }}
-                                onError={() => {
-                                  setImgLoaded(true);
-                                }}
+                                src={nft?.image || ""}
+                                alt={nft?.name}
+                                onError={() => setImgLoaded(true)}
+                                onLoadingComplete={() => setImgLoaded(true)}
                               />
                             </Skeleton>
                           </CardHeader>
@@ -168,15 +170,28 @@ const Gallery = () => {
                         <Divider />
                         <CardFooter p={4}>
                           <ButtonGroup spacing="2" mr={8}>
-                            <Button variant="solid" colorScheme="blue">
+                            <Button
+                              variant="solid"
+                              colorScheme="blue"
+                              background={"#66ccff"}
+                              boxShadow={"lg"}
+                            >
                               Buy now
                             </Button>
                           </ButtonGroup>
                           <SkeletonCircle isLoaded={imgLoaded}>
                             <IconButton
+                              padding={"10px"}
                               variant={"unstyled"}
+                              boxShadow={"md"}
+                              _active={{
+                                transform: "scale(0.9)",
+                                boxShadow: "sm",
+                              }}
+                              borderRadius={"full"}
                               width={"auto"}
                               aria-label="favorite"
+                              color={nft.isFavorite ? "red" : "black"}
                               onClick={async () => {
                                 const res = await handleFavorite(
                                   nfts &&
@@ -195,11 +210,10 @@ const Gallery = () => {
                                   });
                                 }
                               }}
-                            >
-                              <span color={"red !important"}>
-                                {nft.isFavorite ? "♥" : "♡"}
-                              </span>
-                            </IconButton>
+                              icon={
+                                nft.isFavorite ? <Text>♥</Text> : <Text>♡</Text>
+                              }
+                            />
                           </SkeletonCircle>
                         </CardFooter>
                       </Card>

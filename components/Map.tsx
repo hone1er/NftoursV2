@@ -1,89 +1,77 @@
-import { useState, useMemo, useEffect } from "react";
-import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
-import { Box, useDisclosure } from "@chakra-ui/react";
+import "leaflet/dist/leaflet.css";
+import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
+import "leaflet-defaulticon-compatibility";
 
-import { MOCK_NFT_DATA } from "../utils/mockData";
-import { NFTschema, NFTType } from "../utils/zodTypes";
+import React, { useEffect } from "react";
+import { NFTType } from "../utils/zodTypes";
+import Image from "next/image";
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import { Box, Button, Modal, useDisclosure } from "@chakra-ui/react";
+import { NFTCardFront, NFTCardBack } from "./NFTCard";
+import { LatLngExpression } from "leaflet";
 
-export default function Places({
-  setSelectedNFTId,
-}: {
-  setSelectedNFTId: (nftId: number) => void;
-}) {
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: `${process.env.NEXT_PUBLIC_GOOGLE_KEY}`,
-    libraries: ["places"],
-  });
-
-  if (!isLoaded) return <div>Loading...</div>;
-  return <Map setSelectedNFTId={setSelectedNFTId} />;
+interface MapProps {
+  nfts: any;
+  center: { lat: number; lng: number };
+  setSelectedNFTId: any;
 }
 
-function Map({
-  setSelectedNFTId,
-}: {
-  setSelectedNFTId: (nftId: number) => void;
-}) {
-  const [selected, setSelected] = useState<any>(null);
-  const [markers, setMarkers] = useState<NFTType[]>();
-  useEffect(() => {
-    setMarkers(MOCK_NFT_DATA);
-    if (NFTschema.safeParse(MOCK_NFT_DATA[0]).success) {
-      console.log("YAAAAy");
-    }
-  }, []);
+function Map({ nfts, center, setSelectedNFTId }: MapProps) {
+  const mapCenter: LatLngExpression = center
+    ? [center.lat, center.lng]
+    : [38.0171441, -122.2885808];
 
-  //   useEffect(() => {
-  //     const geoCode = async () => {
-  //       const results = await getGeocode({
-  //         address: markers[0].location,
-  //       });
-  //       const { lat, lng } = await getLatLng(results[0]);
-  //       setSelected({ lat, lng });
-  //       console.log({ lat, lng });
-  //     };
-  //     geoCode();
-  //     return () => {};
-  //   }, []);
+  console.count();
 
-  const mapRef: any = useMemo(() => {
-    return mapRef?.current;
-  }, []);
-  const center = useMemo(
-    () => (selected ? selected : { lat: 40.7127753, lng: -74.0059728 }),
-    [selected]
-  );
-
+  const { isOpen, onToggle } = useDisclosure();
   return (
-    <>
-      <Box
-        className="places-container"
-        pos={"absolute"}
-        top={"120px"}
-        left={"calc(50vw - 120px)"}
-        zIndex={10}
-      ></Box>
-
-      <GoogleMap
-        ref={mapRef}
-        zoom={10}
-        center={center}
-        mapContainerStyle={{ width: "100vw", height: "50vh" }}
-        mapContainerClassName="map-container"
-      >
-        {markers &&
-          markers.map((marker) => {
-            if (NFTschema.safeParse(marker).success) {
+    <Box pos={"relative"} zIndex={0} width={"100%"} height={"500px"}>
+      <MapContainer className="map" center={mapCenter} zoom={6}>
+        <TileLayer
+          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        {nfts && (
+          <Box zIndex={1} width={"100%"} height={"500px"}>
+            {nfts?.map((obj: NFTType, idx: number) => {
               return (
                 <Marker
-                  key={marker.id}
-                  position={marker?.geoCode}
-                  onClick={() => setSelectedNFTId(marker?.id)}
-                />
+                  key={idx}
+                  position={obj.geoCode}
+                  eventHandlers={{
+                    click: () => {
+                      setSelectedNFTId(obj?.id);
+                    },
+                  }}
+                >
+                  <Modal
+                    isOpen={isOpen}
+                    onClose={() => {
+                      onToggle;
+                    }}
+                  >
+                    {true ? (
+                      <NFTCardFront
+                        displayPurchaseDetails={true}
+                        nft={nfts && nfts[obj.id]}
+                        handleFlip={() => {}}
+                        onLoad={() => {}}
+                        handleFavorite={async () => {}}
+                      />
+                    ) : (
+                      <NFTCardBack
+                        nft={nfts && nfts[obj.id]}
+                        handleFlip={() => {}}
+                      />
+                    )}
+                  </Modal>
+                </Marker>
               );
-            }
-          })}
-      </GoogleMap>
-    </>
+            })}
+          </Box>
+        )}
+      </MapContainer>
+    </Box>
   );
 }
+export default Map;

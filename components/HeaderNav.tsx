@@ -20,6 +20,7 @@ import {
 } from "@chakra-ui/icons";
 
 import useAppContext from "../context/AppContext";
+import Link from "next/link";
 
 export function HeaderNav() {
   const { ensName, address, router, isConnected, connect, disconnect } =
@@ -27,7 +28,7 @@ export function HeaderNav() {
   return (
     <Flex
       width={"100%"}
-      backgroundImage={"linear-gradient(to right, #fbb8ac, #e6a9e2);"}
+      backgroundImage={"linear-gradient(to right, #0000ff90, #66ccff)"}
       height={"85px"}
       p={4}
       m={0}
@@ -47,7 +48,7 @@ export function HeaderNav() {
         NFTours
       </Button>
 
-      <HStack>
+      <HStack pos={"relative"} zIndex={2}>
         {isConnected ? (
           <>
             <Menu>
@@ -61,7 +62,7 @@ export function HeaderNav() {
                 _hover={{ background: "gray.700" }}
                 _active={{ color: "whiteAlpha.900" }}
               />
-              <MenuList w={"100px"}>
+              <MenuList w={"100px"} pos={"relative"} zIndex={2}>
                 <MenuGroup title="Wallet">
                   <MenuItem
                     onClick={() =>
@@ -79,18 +80,12 @@ export function HeaderNav() {
                 </MenuGroup>
                 <MenuDivider />
                 <MenuGroup title="Navigation">
-                  <MenuItem
-                    onClick={() => router.push("/discover")}
-                    icon={<Search2Icon />}
-                  >
-                    Discover
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => router.push("/gallery")}
-                    icon={<ViewIcon />}
-                  >
-                    Gallery
-                  </MenuItem>
+                  <Link prefetch href="/discover">
+                    <MenuItem icon={<Search2Icon />}>Discover</MenuItem>
+                  </Link>
+                  <Link prefetch href="/gallery">
+                    <MenuItem icon={<ViewIcon />}>Gallery</MenuItem>
+                  </Link>
                 </MenuGroup>
                 <MenuDivider />
                 <MenuGroup title="Account">
