@@ -10,7 +10,7 @@ import { ImageType, MOCK_NFT_DATA } from "../utils/mockData";
 import { NFTType } from "../utils/zodTypes";
 import DiscoverCard from "../components/discover/card";
 import { StaticImageData } from "next/image";
-import Map from "../components/Map";
+import dynamic from "next/dynamic";
 
 const Discover = () => {
   const { isConnected } = useAccount();
@@ -22,7 +22,10 @@ const Discover = () => {
   const [isCardLoaded, setIsCardLoaded] = useState(false);
   // mock NFT data
   const [nfts, setNfts] = useState<NFTType[]>(MOCK_NFT_DATA);
-
+  const Map = dynamic(
+    () => import("../components/Map"), // replace '@components/map' with your component's location
+    { ssr: false } // This line is important. It's what prevents server-side render
+  );
   useEffect(() => {
     if (!isOpen) {
       setIsFront(true);
@@ -31,7 +34,7 @@ const Discover = () => {
   }, [isOpen]);
 
   return (
-    <Box>
+    <Box overflowX={"hidden"}>
       <title>NFTours - discover</title>
       <HeaderNav />
       {isConnected ? (

@@ -12,7 +12,7 @@ import {
   Button,
   IconButton,
   useToast,
-  keyframes,
+  Flex,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -32,7 +32,6 @@ const Gallery = () => {
   const [isFront, setIsFront] = useState(true);
   const [imgLoaded, setImgLoaded] = useState(false);
   const [isCardLoaded, setIsCardLoaded] = useState(false);
-  // mock NFT data
   const { nfts, isError, isLoading, mutate } = useNfts();
   const { handleFavorite } = useIsFavorite();
   const toast = useToast();
@@ -53,7 +52,7 @@ const Gallery = () => {
   }
 
   return (
-    <Box>
+    <Box overflowX={"hidden"}>
       <title>NFTours - Gallery</title>
       <HeaderNav />
 
@@ -63,7 +62,7 @@ const Gallery = () => {
           maxW={"1630px"}
           marginX={"auto"}
           p={4}
-          bg={"gray.300"}
+          bg={"gray.50"}
         >
           <Box
             display="flex"
@@ -90,7 +89,7 @@ const Gallery = () => {
             p={2}
             overflowX={"scroll"}
             display="grid"
-            gridGap={8}
+            gridGap={4}
             gridTemplateColumns={"repeat(auto-fit,minmax(400px, 1fr))"}
             justifyContent={"center"}
             margin={"auto"}
@@ -103,9 +102,8 @@ const Gallery = () => {
                 }
                 if (isSafe.success) {
                   return (
-                    <WrapItem key={idx}>
+                    <WrapItem key={idx} border={"4px solid black"}>
                       <Card
-                        maxW="xs"
                         width={"100%"}
                         margin={"auto"}
                         color={"black"}
@@ -115,21 +113,29 @@ const Gallery = () => {
                       >
                         <CardBody
                           borderRadius={"lg"}
+                          px={4}
                           borderBottomRadius={"0"}
                           onClick={() => {
                             setSelectedNFTId(idx);
                             onOpen();
                           }}
+                          background={"gray.200"}
                         >
-                          <CardHeader
-                            boxShadow={"xl"}
-                            px={8}
-                            pb={8}
-                            borderRadius={"lg"}
-                            transition={"all 2s ease-in-out"}
-                            background={" #0000ff90"}
-                          >
-                            <Heading noOfLines={1} size="md" p={2} h={"44.5px"}>
+                          <CardHeader transition={"all 2s ease-in-out"}>
+                            <Heading
+                              display={"flex !important"}
+                              alignItems={"center !important"}
+                              noOfLines={1}
+                              size="md"
+                              p={1}
+                              lineHeight="32px"
+                              px={2}
+                              boxShadow={"lg"}
+                              mt={2}
+                              mb={2}
+                              h={"44.5px"}
+                              border={"inset"}
+                            >
                               {nft?.name}
                             </Heading>
                             <Skeleton
@@ -138,15 +144,17 @@ const Gallery = () => {
                               isLoaded={imgLoaded}
                               height={imgLoaded ? "unset" : "200px"}
                             >
-                              <Image
-                                src={nft?.image || ""}
-                                alt={nft?.name}
-                                onError={() => setImgLoaded(true)}
-                                onLoadingComplete={() => setImgLoaded(true)}
-                              />
+                              <Flex border={"4px solid black"} p={0} m={0}>
+                                <Image
+                                  src={nft?.image || ""}
+                                  alt={nft?.name}
+                                  onError={() => setImgLoaded(true)}
+                                  onLoadingComplete={() => setImgLoaded(true)}
+                                />
+                              </Flex>
                             </Skeleton>
                           </CardHeader>
-                          <Stack mt="6" spacing="3" p={4}>
+                          <Stack spacing="3" py={4} pt={0}>
                             <Skeleton
                               height={imgLoaded ? "unset" : "20px"}
                               isLoaded={imgLoaded}
@@ -157,18 +165,27 @@ const Gallery = () => {
                               }
                             ></Skeleton>
                             <Skeleton noOfLines={3} isLoaded={imgLoaded}>
-                              <Text noOfLines={3} minH={"92px"}>
+                              <Text
+                                noOfLines={3}
+                                minH={"108px"}
+                                margin={"auto"}
+                                bg={"gray.100"}
+                                p={4}
+                                m={0}
+                                maxH={"108px"}
+                              >
                                 {nft.description}
-                              </Text>
-
-                              <Text color="blue.600" fontSize="2xl">
-                                {nft.price} ETH
                               </Text>
                             </Skeleton>
                           </Stack>
                         </CardBody>
                         <Divider />
-                        <CardFooter p={4}>
+                        <CardFooter
+                          borderTop={"4px solid black"}
+                          p={4}
+                          background={"gray.100"}
+                          justifyContent={"space-between"}
+                        >
                           <ButtonGroup spacing="2" mr={8}>
                             <Button
                               variant="solid"
@@ -215,6 +232,14 @@ const Gallery = () => {
                               }
                             />
                           </SkeletonCircle>
+                          <Text
+                            color="black"
+                            fontWeight="bold"
+                            fontSize="md"
+                            alignSelf={"center"}
+                          >
+                            {nft.price} ETH
+                          </Text>
                         </CardFooter>
                       </Card>
                     </WrapItem>

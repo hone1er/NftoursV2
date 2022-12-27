@@ -2,7 +2,7 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 import "leaflet-defaulticon-compatibility";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { NFTType } from "../utils/zodTypes";
 import Image from "next/image";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
@@ -22,7 +22,6 @@ function Map({ nfts, center, setSelectedNFTId }: MapProps) {
     : [38.0171441, -122.2885808];
 
   console.count();
-
   const { isOpen, onToggle } = useDisclosure();
   return (
     <Box pos={"relative"} zIndex={0} width={"100%"} height={"500px"}>
@@ -74,4 +73,5 @@ function Map({ nfts, center, setSelectedNFTId }: MapProps) {
     </Box>
   );
 }
+// memoize the map
 export default Map;
