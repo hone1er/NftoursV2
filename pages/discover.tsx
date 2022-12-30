@@ -1,15 +1,12 @@
 import { Box, Flex, Text, useDisclosure } from "@chakra-ui/react";
-
 import React, { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { HeaderNav } from "../components/HeaderNav";
 import { Modal, ModalOverlay } from "@chakra-ui/react";
 import { NFTCardBack, NFTCardFront } from "../components/NFTCard";
-import { ImageType, MOCK_NFT_DATA } from "../utils/mockData";
-
+import { MOCK_NFT_DATA } from "../utils/mockData";
 import { NFTType } from "../utils/zodTypes";
 import DiscoverCard from "../components/discover/card";
-import { StaticImageData } from "next/image";
 import dynamic from "next/dynamic";
 
 const Discover = () => {
@@ -55,6 +52,7 @@ const Discover = () => {
             <Map
               nfts={nfts}
               center={center}
+              setCenter={setCenter}
               setSelectedNFTId={(id: number) => {
                 setSelectedNFTId(id);
                 onOpen();

@@ -2,11 +2,10 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 import "leaflet-defaulticon-compatibility";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useRef } from "react";
 import { NFTType } from "../utils/zodTypes";
-import Image from "next/image";
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import { Box, Button, Modal, useDisclosure } from "@chakra-ui/react";
+import { MapContainer, Marker, TileLayer } from "react-leaflet";
+import { Box, Modal, useDisclosure } from "@chakra-ui/react";
 import { NFTCardFront, NFTCardBack } from "./NFTCard";
 import { LatLngExpression } from "leaflet";
 
@@ -14,25 +13,32 @@ interface MapProps {
   nfts: any;
   center: { lat: number; lng: number };
   setSelectedNFTId: any;
+  setCenter: any;
 }
-function Map({ nfts, center, setSelectedNFTId }: MapProps) {
-  const mapElement = React.useRef<any>(null);
+function Map({ nfts, center, setCenter, setSelectedNFTId }: MapProps) {
+  const mapElement = useRef<any>(null);
 
   const mapCenter: LatLngExpression = center
     ? [center.lat, center.lng]
     : [38.0171441, -122.2885808];
 
   const { isOpen, onToggle } = useDisclosure();
+
+  // fixes the map not rendering on first load
   useEffect(() => {
-    window.resizeBy(1, 1);
+    setTimeout(() => {
+      mapElement.current?.invalidateSize();
+    }, 10);
+    return () => {};
   }, [mapElement]);
+
   return (
     <Box pos={"relative"} zIndex={0} width={"100%"} height={"500px"}>
       <MapContainer
         ref={mapElement}
         className="map"
         center={mapCenter}
-        zoom={6}
+        zoom={10}
       >
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -48,6 +54,7 @@ function Map({ nfts, center, setSelectedNFTId }: MapProps) {
                   eventHandlers={{
                     click: () => {
                       setSelectedNFTId(obj?.id);
+                      setCenter(obj?.geoCode);
                     },
                   }}
                 >
@@ -81,5 +88,4 @@ function Map({ nfts, center, setSelectedNFTId }: MapProps) {
     </Box>
   );
 }
-// memoize the map
 export default Map;
