@@ -15,17 +15,25 @@ interface MapProps {
   center: { lat: number; lng: number };
   setSelectedNFTId: any;
 }
-
 function Map({ nfts, center, setSelectedNFTId }: MapProps) {
+  const mapElement = React.useRef<any>(null);
+
   const mapCenter: LatLngExpression = center
     ? [center.lat, center.lng]
     : [38.0171441, -122.2885808];
 
-  console.count();
   const { isOpen, onToggle } = useDisclosure();
+  useEffect(() => {
+    window.resizeBy(1, 1);
+  }, [mapElement]);
   return (
     <Box pos={"relative"} zIndex={0} width={"100%"} height={"500px"}>
-      <MapContainer className="map" center={mapCenter} zoom={6}>
+      <MapContainer
+        ref={mapElement}
+        className="map"
+        center={mapCenter}
+        zoom={6}
+      >
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

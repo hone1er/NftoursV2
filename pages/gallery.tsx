@@ -13,6 +13,7 @@ import {
   IconButton,
   useToast,
   Flex,
+  HStack,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -115,6 +116,7 @@ const Gallery = () => {
                           borderRadius={"lg"}
                           px={4}
                           borderBottomRadius={"0"}
+                          cursor={"pointer"}
                           onClick={() => {
                             setSelectedNFTId(idx);
                             onOpen();
@@ -196,50 +198,60 @@ const Gallery = () => {
                               Buy now
                             </Button>
                           </ButtonGroup>
-                          <SkeletonCircle isLoaded={imgLoaded}>
-                            <IconButton
-                              padding={"10px"}
-                              variant={"unstyled"}
-                              boxShadow={"md"}
-                              _active={{
-                                transform: "scale(0.9)",
-                                boxShadow: "sm",
-                              }}
-                              borderRadius={"full"}
-                              width={"auto"}
-                              aria-label="favorite"
-                              color={nft.isFavorite ? "red" : "black"}
-                              onClick={async () => {
-                                const res = await handleFavorite(
-                                  nfts &&
-                                    nfts.find((n: NFTType) => n.id === nft.id)
-                                );
-                                if (res?.status === 200) {
-                                  mutate();
-                                } else {
-                                  toast({
-                                    title: "Error",
-                                    description:
-                                      "there was an error on our end. please try again later.",
-                                    status: "error",
-                                    duration: 4000,
-                                    isClosable: true,
-                                  });
-                                }
-                              }}
-                              icon={
-                                nft.isFavorite ? <Text>♥</Text> : <Text>♡</Text>
-                              }
-                            />
-                          </SkeletonCircle>
-                          <Text
-                            color="black"
-                            fontWeight="bold"
-                            fontSize="md"
-                            alignSelf={"center"}
+                          <HStack
+                            alignItems={"baseline"}
+                            w={"165px"}
+                            justifyContent={"space-between"}
                           >
-                            {nft.price} ETH
-                          </Text>
+                            <SkeletonCircle isLoaded={imgLoaded}>
+                              <IconButton
+                                padding={"10px"}
+                                variant={"unstyled"}
+                                boxShadow={"md"}
+                                _active={{
+                                  transform: "scale(0.9)",
+                                  boxShadow: "sm",
+                                }}
+                                borderRadius={"full"}
+                                width={"auto"}
+                                aria-label="favorite"
+                                color={nft.isFavorite ? "red" : "black"}
+                                onClick={async () => {
+                                  const res = await handleFavorite(
+                                    nfts &&
+                                      nfts.find((n: NFTType) => n.id === nft.id)
+                                  );
+                                  if (res?.status === 200) {
+                                    mutate();
+                                  } else {
+                                    toast({
+                                      title: "Error",
+                                      description:
+                                        "there was an error on our end. please try again later.",
+                                      status: "error",
+                                      duration: 4000,
+                                      isClosable: true,
+                                    });
+                                  }
+                                }}
+                                icon={
+                                  nft.isFavorite ? (
+                                    <Text>♥</Text>
+                                  ) : (
+                                    <Text>♡</Text>
+                                  )
+                                }
+                              />
+                            </SkeletonCircle>
+                            <Text
+                              color="black"
+                              fontWeight="bold"
+                              fontSize="md"
+                              alignSelf={"center"}
+                            >
+                              {nft.price} ETH
+                            </Text>
+                          </HStack>
                         </CardFooter>
                       </Card>
                     </WrapItem>

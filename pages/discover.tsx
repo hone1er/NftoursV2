@@ -23,9 +23,10 @@ const Discover = () => {
   // mock NFT data
   const [nfts, setNfts] = useState<NFTType[]>(MOCK_NFT_DATA);
   const Map = dynamic(
-    () => import("../components/Map"), // replace '@components/map' with your component's location
+    () => import("../components/Map"),
     { ssr: false } // This line is important. It's what prevents server-side render
   );
+
   useEffect(() => {
     if (!isOpen) {
       setIsFront(true);
@@ -71,6 +72,7 @@ const Discover = () => {
           >
             {nfts.map((nft: NFTType) => (
               <DiscoverCard
+                key={nft.id}
                 image={nft.image}
                 location={nft.location}
                 price={nft.price}
