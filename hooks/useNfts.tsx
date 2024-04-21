@@ -1,5 +1,4 @@
-import useSWR from "swr";
-import { z } from "zod";
+import useSWR from 'swr';
 
 async function fetcher(url: string) {
   const response = await fetch(url);
@@ -7,7 +6,7 @@ async function fetcher(url: string) {
   return await response.json();
 }
 const useNfts = () => {
-  const { data, error, mutate } = useSWR("/api/getNfts", fetcher, {
+  const { data, error, mutate } = useSWR('/api/getNfts', fetcher, {
     revalidateOnFocus: false,
   });
 

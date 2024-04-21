@@ -1,13 +1,13 @@
-import { Box, Flex, Text, useDisclosure } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
-import { HeaderNav } from "../components/HeaderNav";
-import { Modal, ModalOverlay } from "@chakra-ui/react";
-import { NFTCardBack, NFTCardFront } from "../components/NFTCard";
-import { MOCK_NFT_DATA } from "../utils/mockData";
-import { NFTType } from "../utils/zodTypes";
-import DiscoverCard from "../components/discover/card";
-import dynamic from "next/dynamic";
+import { Box, Flex, Text, useDisclosure } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
+import { useAccount } from 'wagmi';
+import { HeaderNav } from '../components/HeaderNav';
+import { Modal, ModalOverlay } from '@chakra-ui/react';
+import { NFTCardBack, NFTCardFront } from '../components/NFTCard';
+import { MOCK_NFT_DATA } from '../utils/mockData';
+import { NFTType } from '../utils/zodTypes';
+import DiscoverCard from '../components/discover/card';
+import dynamic from 'next/dynamic';
 
 const Discover = () => {
   const { isConnected } = useAccount();
@@ -15,12 +15,11 @@ const Discover = () => {
   const [center, setCenter] = useState<any>(null);
   const [selectedNFTId, setSelectedNFTId] = useState(0);
   const [isFront, setIsFront] = useState(true);
-  const [imgLoaded, setImgLoaded] = useState(false);
   const [isCardLoaded, setIsCardLoaded] = useState(false);
   // mock NFT data
   const [nfts, setNfts] = useState<NFTType[]>(MOCK_NFT_DATA);
-  const Map = dynamic(
-    () => import("../components/Map"),
+  const MapComponent = dynamic(
+    () => import('../components/Map'),
     { ssr: false } // This line is important. It's what prevents server-side render
   );
 
@@ -32,24 +31,24 @@ const Discover = () => {
   }, [isOpen]);
 
   return (
-    <Box overflowX={"hidden"}>
+    <Box overflowX={'hidden'}>
       <title>NFTours - discover</title>
       <HeaderNav />
       {isConnected ? (
-        <Box width={"100%"} maxW={"1260px"} marginX={"auto"}>
+        <Box width={'100%'} maxW={'1260px'} marginX={'auto'}>
           <Box
-            display="flex"
-            flexWrap="wrap"
-            justifyContent="flex-start"
-            alignItems="center"
-            width={"100%"}
+            display='flex'
+            flexWrap='wrap'
+            justifyContent='flex-start'
+            alignItems='center'
+            width={'100%'}
             mt={12}
             p={4}
           >
-            <Text fontSize={"4xl"} color={"gray.600"}>
+            <Text fontSize={'4xl'} color={'gray.600'}>
               Discover
             </Text>
-            <Map
+            <MapComponent
               nfts={nfts}
               center={center}
               setCenter={setCenter}
@@ -61,12 +60,12 @@ const Discover = () => {
           </Box>
           <Flex
             mx={4}
-            flexDir={"column"}
-            bg={"gray.300"}
+            flexDir={'column'}
+            bg={'gray.300'}
             gap={4}
             p={4}
-            maxH={"750px"}
-            overflowY={"scroll"}
+            maxH={'750px'}
+            overflowY={'scroll'}
           >
             {nfts.map((nft: NFTType) => (
               <DiscoverCard
@@ -85,7 +84,7 @@ const Discover = () => {
           <Modal onClose={onClose} isOpen={isOpen} isCentered>
             <ModalOverlay
               background={
-                "linear-gradient(0deg, rgba(0,0,0,.24) 0%, rgba(255,255,255,.25) 100%)"
+                'linear-gradient(0deg, rgba(0,0,0,.24) 0%, rgba(255,255,255,.25) 100%)'
               }
             />
             {isFront ? (
@@ -94,7 +93,6 @@ const Discover = () => {
                 handleFlip={() => {
                   setIsFront(false);
                 }}
-                isFront={isFront}
                 isCardLoaded={isCardLoaded}
                 onLoad={() => {
                   setIsCardLoaded(true);
@@ -121,7 +119,7 @@ const Discover = () => {
           </Modal>
         </Box>
       ) : (
-        <Text fontSize={"xl"} color={"gray.600"}>
+        <Text fontSize={'xl'} color={'gray.600'}>
           Please connect your wallet to view your NFTs
         </Text>
       )}

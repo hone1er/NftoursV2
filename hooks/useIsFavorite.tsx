@@ -1,5 +1,5 @@
-import React from "react";
-import { NFTType } from "../utils/zodTypes";
+import React from 'react';
+import { NFTType } from '../utils/zodTypes';
 
 const useIsFavorite = () => {
   const [data, setData] = React.useState<NFTType>();
@@ -8,10 +8,10 @@ const useIsFavorite = () => {
   console.count();
   const handleFavorite = async (nft: NFTType) => {
     setIsLoading(true);
-    const res = await fetch("/api/updateFavorite", {
-      method: "PUT",
+    const res = await fetch('/api/updateFavorite', {
+      method: 'PUT',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         id: nft?.id,
@@ -27,7 +27,7 @@ const useIsFavorite = () => {
       setData(updatedNFT);
       setIsLoading(false);
     }
-    return await res;
+    return res;
   };
 
   return {

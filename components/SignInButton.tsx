@@ -1,14 +1,14 @@
-import * as React from "react";
-import { useAccount, useNetwork, useSignMessage } from "wagmi";
-import { SiweMessage } from "siwe";
-import useAppContext from "../context/AppContext";
+import * as React from 'react';
+import { useAccount, useNetwork, useSignMessage } from 'wagmi';
+import { SiweMessage } from 'siwe';
+import useAppContext from '../context/AppContext';
 
 function SignInButton({
   onSuccess,
   onError,
 }: {
-  onSuccess: (args: { address: string }) => void;
-  onError: (args: { error: Error }) => void;
+  readonly onSuccess: (args: { address: string }) => void;
+  readonly onError: (args: { error: Error }) => void;
 }) {
   const [state, setState] = React.useState<{
     loading?: boolean;
@@ -17,7 +17,7 @@ function SignInButton({
 
   const fetchNonce = async () => {
     try {
-      const nonceRes = await fetch("/api/nonce");
+      const nonceRes = await fetch('/api/nonce');
       const nonce = await nonceRes.text();
       setState((x) => ({ ...x, nonce }));
     } catch (error) {
@@ -46,9 +46,9 @@ function SignInButton({
       const message = new SiweMessage({
         domain: window.location.host,
         address,
-        statement: "Sign in with Ethereum to the app.",
+        statement: 'Sign in with Ethereum to the app.',
         uri: window.location.origin,
-        version: "1",
+        version: '1',
         chainId,
         nonce: state.nonce,
       });
@@ -57,14 +57,14 @@ function SignInButton({
       });
 
       // Verify signature
-      const verifyRes = await fetch("/api/verify", {
-        method: "POST",
+      const verifyRes = await fetch('/api/verify', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ message, signature }),
       });
-      if (!verifyRes.ok) throw new Error("Error verifying message");
+      if (!verifyRes.ok) throw new Error('Error verifying message');
 
       setState((x) => ({ ...x, loading: false }));
       onSuccess({ address });
@@ -84,7 +84,7 @@ function SignInButton({
 
 export function Profile() {
   const { isConnected } = useAccount();
-  const { isSignedIn, setIsSignedIn } = useAppContext();
+  const { setIsSignedIn } = useAppContext();
   const [state, setState] = React.useState<{
     address?: string;
     error?: Error;
@@ -95,7 +95,7 @@ export function Profile() {
   React.useEffect(() => {
     const handler = async () => {
       try {
-        const res = await fetch("/api/login");
+        const res = await fetch('/api/login');
         const json = await res.json();
         setState((x) => ({ ...x, address: json.address }));
       } catch (_error) {}
@@ -104,8 +104,8 @@ export function Profile() {
     handler();
 
     // 2. window is focused (in case user logs out of another window)
-    window.addEventListener("focus", handler);
-    return () => window.removeEventListener("focus", handler);
+    window.addEventListener('focus', handler);
+    return () => window.removeEventListener('focus', handler);
   }, []);
 
   if (isConnected) {
@@ -117,10 +117,12 @@ export function Profile() {
           <div>
             <div>Signed in as {state.address}</div>
             <button
-              onClick={async () => {
-                await fetch("/api/logout");
-                setState({});
-                setIsSignedIn(false);
+              onClick={() => {
+                (async () => {
+                  await fetch('/api/logout');
+                  setState({});
+                  setIsSignedIn(false);
+                })();
               }}
             >
               Sign Out

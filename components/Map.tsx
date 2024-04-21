@@ -1,21 +1,21 @@
-import "leaflet/dist/leaflet.css";
-import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
-import "leaflet-defaulticon-compatibility";
+import 'leaflet/dist/leaflet.css';
+import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
+import 'leaflet-defaulticon-compatibility';
 
-import React, { useEffect, useRef } from "react";
-import { NFTType } from "../utils/zodTypes";
-import { MapContainer, Marker, TileLayer } from "react-leaflet";
-import { Box, Modal, useDisclosure } from "@chakra-ui/react";
-import { NFTCardFront, NFTCardBack } from "./NFTCard";
-import { LatLngExpression } from "leaflet";
+import React, { useEffect, useRef } from 'react';
+import { NFTType } from '../utils/zodTypes';
+import { MapContainer, Marker, TileLayer } from 'react-leaflet';
+import { Box, Modal, useDisclosure } from '@chakra-ui/react';
+import { NFTCardFront, NFTCardBack } from './NFTCard';
+import { LatLngExpression } from 'leaflet';
 
 interface MapProps {
-  nfts: any;
-  center: { lat: number; lng: number };
-  setSelectedNFTId: any;
-  setCenter: any;
+  readonly nfts: any;
+  readonly center: { lat: number; lng: number };
+  readonly setSelectedNFTId: any;
+  readonly setCenter: any;
 }
-function Map({ nfts, center, setCenter, setSelectedNFTId }: MapProps) {
+function MapComponent({ nfts, center, setCenter, setSelectedNFTId }: MapProps) {
   const mapElement = useRef<any>(null);
 
   const mapCenter: LatLngExpression = center
@@ -33,23 +33,23 @@ function Map({ nfts, center, setCenter, setSelectedNFTId }: MapProps) {
   }, [mapElement]);
 
   return (
-    <Box pos={"relative"} zIndex={0} width={"100%"} height={"500px"}>
+    <Box pos={'relative'} zIndex={0} width={'100%'} height={'500px'}>
       <MapContainer
         ref={mapElement}
-        className="map"
+        className='map'
         center={mapCenter}
         zoom={10}
       >
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
         />
         {nfts && (
-          <Box zIndex={1} width={"100%"} height={"500px"}>
-            {nfts?.map((obj: NFTType, idx: number) => {
+          <Box zIndex={1} width={'100%'} height={'500px'}>
+            {nfts?.map((obj: NFTType) => {
               return (
                 <Marker
-                  key={idx}
+                  key={obj.id}
                   position={obj.geoCode}
                   eventHandlers={{
                     click: () => {
@@ -61,7 +61,7 @@ function Map({ nfts, center, setCenter, setSelectedNFTId }: MapProps) {
                   <Modal
                     isOpen={isOpen}
                     onClose={() => {
-                      onToggle;
+                      onToggle();
                     }}
                   >
                     {true ? (
@@ -88,4 +88,4 @@ function Map({ nfts, center, setCenter, setSelectedNFTId }: MapProps) {
     </Box>
   );
 }
-export default Map;
+export default MapComponent;
