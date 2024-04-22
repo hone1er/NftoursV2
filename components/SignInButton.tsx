@@ -91,7 +91,6 @@ export function Profile() {
     loading?: boolean;
   }>({});
 
-  // Fetch user when:
   React.useEffect(() => {
     const handler = async () => {
       try {
@@ -100,12 +99,17 @@ export function Profile() {
         setState((x) => ({ ...x, address: json.address }));
       } catch (_error) {}
     };
+
+    const syncHandler = () => {
+      handler();
+    };
+
     // 1. page loads
-    handler();
+    syncHandler();
 
     // 2. window is focused (in case user logs out of another window)
-    window.addEventListener('focus', handler);
-    return () => window.removeEventListener('focus', handler);
+    window.addEventListener('focus', syncHandler);
+    return () => window.removeEventListener('focus', syncHandler);
   }, []);
 
   if (isConnected) {
